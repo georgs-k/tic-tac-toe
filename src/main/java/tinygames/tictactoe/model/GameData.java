@@ -12,7 +12,9 @@ import javax.validation.constraints.NotEmpty;
 @Data
 public class GameData {
 
-    @ApiModelProperty(notes = "Game board array of nine cells (3 x 3): 1 = Player's cell, -1 = API's cell, 0 = Empty cell")
+    @ApiModelProperty(
+            notes = "Game board array of nine cells (3 x 3): 1 = Player's cell, -1 = API's cell, 0 = Empty cell",
+            example = "[0, 0, 0, 0, 1, 0, 0, 0, 0]")
     @NotEmpty(message = "Provide game board data (left-right, top-bottom): 1 = Player's cell, -1 = API's cell, 0 = Empty cell")
     private int[] board;
 

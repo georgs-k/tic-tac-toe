@@ -29,7 +29,7 @@ public class GameController {
 
     @PostMapping("/")
     @ApiOperation(value = "Responds to submitted game data",
-            notes = "Provide an array[9] with game board data (left-right, top-bottom): 1 = Player's cell, -1 = API's cell, 0 = Empty cell",
+            notes = "Provide an array with game board data (left-right, top-bottom): 1 = Player's cell, -1 = API's cell, 0 = Empty cell",
             response = GameData.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success"),

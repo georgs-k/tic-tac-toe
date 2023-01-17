@@ -1,7 +1,9 @@
 package tinygames.tictactoe.business.service;
 
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import tinygames.tictactoe.model.GameData;
 
 import java.security.SecureRandom;
@@ -14,6 +16,17 @@ public class GameService {
     private final int[] preferredCells1 = {0, 2, 6, 8, 1, 3, 5, 7};
     private final int[] preferredCells2 = {1, 3, 5, 7, 0, 2, 6, 8};
     private final SecureRandom random = new SecureRandom();
+
+    private void validateInput(int[] board) {
+        if (board.length != 9) {
+            log.error("Exception {} is thrown. Wrong number of values (must be 9)", HttpStatus.BAD_REQUEST);
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Wrong number of values (must be 9)");
+        }
+        for (int i = 0; i < 9; i++) if (board[i] < -1 || board[i] > 1) {
+            log.error("Exception {} is thrown. Invalid data (acceptable values: -1, 0, or 1)", HttpStatus.BAD_REQUEST);
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Invalid data (acceptable values: -1, 0, or 1)");
+        }
+    }
 
     private void shufflePreferredCells() {
         int swapIndex, temp;
@@ -64,9 +77,11 @@ public class GameService {
         final int TWO_PLAYERS_CELLS = 2;
         final int THREE_PLAYERS_CELLS = 3;
 
+        validateInput(gameData.getBoard());
         shufflePreferredCells();
         if (findCellLineWith(THREE_PLAYERS_CELLS, gameData.getBoard())) {
             gameData.setStatus("player wins");
+            log.info("Player wins");
             return gameData;
         }
         boolean existsEmptyCell = false;
@@ -76,6 +91,7 @@ public class GameService {
         }
         if (!existsEmptyCell) {
             gameData.setStatus("a draw");
+            log.info("No more free cells - a draw");
             return gameData;
         }
         int i = -1;
@@ -83,32 +99,38 @@ public class GameService {
             while (gameData.getBoard()[cellLine[++i]] != EMPTY_CELL);
             gameData.getBoard()[cellLine[i]] = PROGRAMS_CELL;
             gameData.setStatus("API wins");
+            log.info("API wins");
             return gameData;
         }
         gameData.setStatus("API makes a move");
         if (findCellLineWith(TWO_PLAYERS_CELLS, gameData.getBoard())) {
             while (gameData.getBoard()[cellLine[++i]] != EMPTY_CELL);
             gameData.getBoard()[cellLine[i]] = PROGRAMS_CELL;
+            log.info("API prevents player's immediate victory");
             return gameData;
         }
         if (gameData.getBoard()[4] == EMPTY_CELL) {
             gameData.getBoard()[4] = PROGRAMS_CELL;
+            log.info("API takes the middle cell");
             return gameData;
         }
         if (gameData.getBoard()[4] == PLAYERS_CELL) {
             while (gameData.getBoard()[preferredCells1[++i]] != EMPTY_CELL);
             gameData.getBoard()[preferredCells1[i]] = PROGRAMS_CELL;
+            log.info("API takes a corner cell if available, otherwise a side cell");
             return gameData;
         }
         int sumOfCornerCells = gameData.getBoard()[0] + gameData.getBoard()[2] + gameData.getBoard()[6] + gameData.getBoard()[8];
-        int sumOfMidSideCells = gameData.getBoard()[1] + gameData.getBoard()[3] + gameData.getBoard()[5] + gameData.getBoard()[7];
-        if (Math.abs(sumOfCornerCells) > Math.abs(sumOfMidSideCells)) {
+        int sumOfSideCells = gameData.getBoard()[1] + gameData.getBoard()[3] + gameData.getBoard()[5] + gameData.getBoard()[7];
+        if (Math.abs(sumOfCornerCells) > Math.abs(sumOfSideCells)) {
             while (gameData.getBoard()[preferredCells2[++i]] != EMPTY_CELL);
             gameData.getBoard()[preferredCells2[i]] = PROGRAMS_CELL;
+            log.info("API takes a side cell if available, otherwise a corner cell");
             return gameData;
         }
         while (gameData.getBoard()[preferredCells1[++i]] != EMPTY_CELL);
         gameData.getBoard()[preferredCells1[i]] = PROGRAMS_CELL;
+        log.info("API takes a corner cell if available, otherwise a side cell");
         return gameData;
     }
 }
