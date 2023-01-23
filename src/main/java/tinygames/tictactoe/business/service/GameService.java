@@ -17,57 +17,6 @@ public class GameService {
     private final int[] preferredCells2 = {1, 3, 5, 7, 0, 2, 6, 8};
     private final SecureRandom random = new SecureRandom();
 
-    private void validateInput(int[] board) {
-        if (board.length != 9) {
-            log.error("Exception {} is thrown. Wrong number of values (must be 9)", HttpStatus.BAD_REQUEST);
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Wrong number of values (must be 9)");
-        }
-        for (int i = 0; i < 9; i++) if (board[i] < -1 || board[i] > 1) {
-            log.error("Exception {} is thrown. Invalid data (acceptable values: -1, 0, or 1)", HttpStatus.BAD_REQUEST);
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Invalid data (acceptable values: -1, 0, or 1)");
-        }
-    }
-
-    private void shufflePreferredCells() {
-        int swapIndex, temp;
-        for (int i = 3; i > 1; i--) {
-            swapIndex = random.nextInt(i);
-            temp = preferredCells1[i];
-            preferredCells1[i] = preferredCells1[swapIndex];
-            preferredCells1[swapIndex] = temp;
-            swapIndex = random.nextInt(i);
-            temp = preferredCells2[i];
-            preferredCells2[i] = preferredCells2[swapIndex];
-            preferredCells2[swapIndex] = temp;
-        }
-        for (int i = 0; i < 4; i++) {
-            preferredCells1[i + 4] = preferredCells2[i];
-            preferredCells2[i + 4] = preferredCells1[i];
-        }
-    }
-
-    private boolean findCellLineWith(int choice, int[] board) {
-        for (int cellNumber = 0; cellNumber < 9; cellNumber += 3)
-            if (choice == board[cellNumber] + board[cellNumber + 1] + board[cellNumber + 2]) {
-                for (int i = 0; i < 3; i++) cellLine[i] = cellNumber + i;
-                return true;
-            }
-        for (int cellNumber = 0; cellNumber < 3; cellNumber++)
-            if (choice == board[cellNumber] + board[cellNumber + 3] + board[cellNumber + 6]) {
-                for (int i = 0; i < 3; i++) cellLine[i] = cellNumber + i * 3;
-                return true;
-            }
-        if (choice == board[0] + board[4] + board[8]) {
-            for (int i = 0; i < 3; i++) cellLine[i] = i * 4;
-            return true;
-        }
-        if (choice == board[2] + board[4] + board[6]) {
-            for (int i = 0; i < 3; i++) cellLine[i] = i * 2 + 2;
-            return true;
-        }
-        return false;
-    }
-
     public GameData generateResponse(GameData gameData) {
 
         final int TWO_PROGRAMS_CELLS = -2;
@@ -132,5 +81,56 @@ public class GameService {
         gameData.getBoard()[preferredCells1[i]] = PROGRAMS_CELL;
         log.info("API takes a corner cell if available, otherwise a side cell");
         return gameData;
+    }
+
+    private void validateInput(int[] board) {
+        if (board.length != 9) {
+            log.error("Exception {} is thrown. Wrong number of values (must be 9)", HttpStatus.BAD_REQUEST);
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Wrong number of values (must be 9)");
+        }
+        for (int i = 0; i < 9; i++) if (board[i] < -1 || board[i] > 1) {
+            log.error("Exception {} is thrown. Invalid data (acceptable values: -1, 0, or 1)", HttpStatus.BAD_REQUEST);
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Invalid data (acceptable values: -1, 0, or 1)");
+        }
+    }
+
+    private void shufflePreferredCells() {
+        int swapIndex, temp;
+        for (int i = 3; i > 1; i--) {
+            swapIndex = random.nextInt(i);
+            temp = preferredCells1[i];
+            preferredCells1[i] = preferredCells1[swapIndex];
+            preferredCells1[swapIndex] = temp;
+            swapIndex = random.nextInt(i);
+            temp = preferredCells2[i];
+            preferredCells2[i] = preferredCells2[swapIndex];
+            preferredCells2[swapIndex] = temp;
+        }
+        for (int i = 0; i < 4; i++) {
+            preferredCells1[i + 4] = preferredCells2[i];
+            preferredCells2[i + 4] = preferredCells1[i];
+        }
+    }
+
+    private boolean findCellLineWith(int choice, int[] board) {
+        for (int cellNumber = 0; cellNumber < 9; cellNumber += 3)
+            if (choice == board[cellNumber] + board[cellNumber + 1] + board[cellNumber + 2]) {
+                for (int i = 0; i < 3; i++) cellLine[i] = cellNumber + i;
+                return true;
+            }
+        for (int cellNumber = 0; cellNumber < 3; cellNumber++)
+            if (choice == board[cellNumber] + board[cellNumber + 3] + board[cellNumber + 6]) {
+                for (int i = 0; i < 3; i++) cellLine[i] = cellNumber + i * 3;
+                return true;
+            }
+        if (choice == board[0] + board[4] + board[8]) {
+            for (int i = 0; i < 3; i++) cellLine[i] = i * 4;
+            return true;
+        }
+        if (choice == board[2] + board[4] + board[6]) {
+            for (int i = 0; i < 3; i++) cellLine[i] = i * 2 + 2;
+            return true;
+        }
+        return false;
     }
 }
