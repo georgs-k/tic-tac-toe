@@ -16,6 +16,7 @@ public class GameService {
     private final int[] preferredCells1 = {0, 2, 6, 8, 1, 3, 5, 7};
     private final int[] preferredCells2 = {1, 3, 5, 7, 0, 2, 6, 8};
     private final SecureRandom random = new SecureRandom();
+    private int[] board;
 
     public GameData generateResponse(GameData gameData) {
 
@@ -26,15 +27,16 @@ public class GameService {
         final int TWO_PLAYERS_CELLS = 2;
         final int THREE_PLAYERS_CELLS = 3;
 
-        validateInput(gameData.getBoard());
+        board = gameData.getBoard();
+        validateInput();
         shufflePreferredCells();
-        if (findCellLineWith(THREE_PLAYERS_CELLS, gameData.getBoard())) {
+        if (findCellLineWith(THREE_PLAYERS_CELLS)) {
             gameData.setStatus("player wins");
             log.info("Player wins");
             return gameData;
         }
         boolean existsEmptyCell = false;
-        for (int i = 0; i < 9; i++) if (gameData.getBoard()[i] == EMPTY_CELL) {
+        for (int i = 0; i < 9; i++) if (board[i] == EMPTY_CELL) {
             existsEmptyCell = true;
             break;
         }
@@ -44,46 +46,46 @@ public class GameService {
             return gameData;
         }
         int i = -1;
-        if (findCellLineWith(TWO_PROGRAMS_CELLS, gameData.getBoard())) {
-            while (gameData.getBoard()[cellLine[++i]] != EMPTY_CELL);
-            gameData.getBoard()[cellLine[i]] = PROGRAMS_CELL;
+        if (findCellLineWith(TWO_PROGRAMS_CELLS)) {
+            while (board[cellLine[++i]] != EMPTY_CELL);
+            board[cellLine[i]] = PROGRAMS_CELL;
             gameData.setStatus("API wins");
             log.info("API wins");
             return gameData;
         }
         gameData.setStatus("API makes a move");
-        if (findCellLineWith(TWO_PLAYERS_CELLS, gameData.getBoard())) {
-            while (gameData.getBoard()[cellLine[++i]] != EMPTY_CELL);
-            gameData.getBoard()[cellLine[i]] = PROGRAMS_CELL;
+        if (findCellLineWith(TWO_PLAYERS_CELLS)) {
+            while (board[cellLine[++i]] != EMPTY_CELL);
+            board[cellLine[i]] = PROGRAMS_CELL;
             log.info("API prevents player's immediate victory");
             return gameData;
         }
-        if (gameData.getBoard()[4] == EMPTY_CELL) {
-            gameData.getBoard()[4] = PROGRAMS_CELL;
+        if (board[4] == EMPTY_CELL) {
+            board[4] = PROGRAMS_CELL;
             log.info("API takes the middle cell");
             return gameData;
         }
-        if (gameData.getBoard()[4] == PLAYERS_CELL) {
-            while (gameData.getBoard()[preferredCells1[++i]] != EMPTY_CELL);
-            gameData.getBoard()[preferredCells1[i]] = PROGRAMS_CELL;
+        if (board[4] == PLAYERS_CELL) {
+            while (board[preferredCells1[++i]] != EMPTY_CELL);
+            board[preferredCells1[i]] = PROGRAMS_CELL;
             log.info("API takes a corner cell if available, otherwise a side cell");
             return gameData;
         }
-        int sumOfCornerCells = gameData.getBoard()[0] + gameData.getBoard()[2] + gameData.getBoard()[6] + gameData.getBoard()[8];
-        int sumOfSideCells = gameData.getBoard()[1] + gameData.getBoard()[3] + gameData.getBoard()[5] + gameData.getBoard()[7];
+        int sumOfCornerCells = board[0] + board[2] + board[6] + board[8];
+        int sumOfSideCells = board[1] + board[3] + board[5] + board[7];
         if (Math.abs(sumOfCornerCells) > Math.abs(sumOfSideCells)) {
-            while (gameData.getBoard()[preferredCells2[++i]] != EMPTY_CELL);
-            gameData.getBoard()[preferredCells2[i]] = PROGRAMS_CELL;
+            while (board[preferredCells2[++i]] != EMPTY_CELL);
+            board[preferredCells2[i]] = PROGRAMS_CELL;
             log.info("API takes a side cell if available, otherwise a corner cell");
             return gameData;
         }
-        while (gameData.getBoard()[preferredCells1[++i]] != EMPTY_CELL);
-        gameData.getBoard()[preferredCells1[i]] = PROGRAMS_CELL;
+        while (board[preferredCells1[++i]] != EMPTY_CELL);
+        board[preferredCells1[i]] = PROGRAMS_CELL;
         log.info("API takes a corner cell if available, otherwise a side cell");
         return gameData;
     }
 
-    private void validateInput(int[] board) {
+    private void validateInput() {
         if (board.length != 9) {
             log.error("Exception {} is thrown. Wrong number of values (must be 9)", HttpStatus.BAD_REQUEST);
             throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Wrong number of values (must be 9)");
@@ -112,7 +114,7 @@ public class GameService {
         }
     }
 
-    private boolean findCellLineWith(int choice, int[] board) {
+    private boolean findCellLineWith(int choice) {
         for (int cellNumber = 0; cellNumber < 9; cellNumber += 3)
             if (choice == board[cellNumber] + board[cellNumber + 1] + board[cellNumber + 2]) {
                 for (int i = 0; i < 3; i++) cellLine[i] = cellNumber + i;
