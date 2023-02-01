@@ -26,9 +26,6 @@ public class GameControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private GameController controller;
-
     @MockBean
     private GameService service;
 
