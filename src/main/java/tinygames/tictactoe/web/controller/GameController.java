@@ -42,6 +42,6 @@ public class GameController {
             return ResponseEntity.badRequest().build();
         }
         log.debug("API responds with game data: {}", gameData);
-        return new ResponseEntity<>(gameService.generateResponse(gameData), HttpStatus.OK);
+        return new ResponseEntity<>(gameService.processGameData(gameData), HttpStatus.OK);
     }
 }
