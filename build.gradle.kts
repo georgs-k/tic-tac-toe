@@ -2,6 +2,7 @@ plugins {
 	java
 	id("org.springframework.boot") version "2.7.7"
 	id("io.spring.dependency-management") version "1.0.15.RELEASE"
+    id("org.sonarqube") version "5.0.0.4638"
 }
 
 group = "tinygames"
