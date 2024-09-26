@@ -86,7 +86,8 @@ public class GameService {
     }
 
     private void shuffleIndicesOfPreferredCells() {
-        int swapIndex, temp;
+        int swapIndex;
+        int temp;
         for (int i = 3; i > 1; i--) {
             swapIndex = random.nextInt(i);
             temp = indicesOfPreferredCornerCells[i];
@@ -106,20 +107,28 @@ public class GameService {
     private boolean isFoundStreakWith(int sumOfCellValues) {
         for (int cellIndex = 0; cellIndex < 9; cellIndex += 3)
             if (sumOfCellValues == board[cellIndex] + board[cellIndex + 1] + board[cellIndex + 2]) {
-                for (int i = 0; i < 3; i++) indicesOfCellStreak[i] = cellIndex + i;
+                indicesOfCellStreak[0] = cellIndex;
+                indicesOfCellStreak[1] = cellIndex + 1;
+                indicesOfCellStreak[2] = cellIndex + 2;
                 return true;
             }
         for (int cellIndex = 0; cellIndex < 3; cellIndex++)
             if (sumOfCellValues == board[cellIndex] + board[cellIndex + 3] + board[cellIndex + 6]) {
-                for (int i = 0; i < 3; i++) indicesOfCellStreak[i] = cellIndex + i * 3;
+                indicesOfCellStreak[0] = cellIndex;
+                indicesOfCellStreak[1] = cellIndex + 3;
+                indicesOfCellStreak[2] = cellIndex + 6;
                 return true;
             }
         if (sumOfCellValues == board[0] + board[4] + board[8]) {
-            for (int i = 0; i < 3; i++) indicesOfCellStreak[i] = i * 4;
+            indicesOfCellStreak[0] = 0;
+            indicesOfCellStreak[1] = 4;
+            indicesOfCellStreak[2] = 8;
             return true;
         }
         if (sumOfCellValues == board[2] + board[4] + board[6]) {
-            for (int i = 0; i < 3; i++) indicesOfCellStreak[i] = i * 2 + 2;
+            indicesOfCellStreak[0] = 2;
+            indicesOfCellStreak[1] = 4;
+            indicesOfCellStreak[2] = 6;
             return true;
         }
         return false;

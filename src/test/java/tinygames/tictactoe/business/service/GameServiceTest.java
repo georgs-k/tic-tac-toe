@@ -18,42 +18,42 @@ public class GameServiceTest {
     private final GameData gameData = new GameData();
 
     @Test
-    public void wrongNumberOfValuesTest() {
+    void wrongNumberOfValuesTest() {
         int[] board = {0, 0, 0, 0, 0, 0, 0, 0};
         gameData.setBoard(board);
         assertThrows(HttpClientErrorException.class, () -> gameService.processGameData(gameData));
     }
 
     @Test
-    public void invalidDataTest() {
+    void invalidDataTest() {
         int[] board = {0, 0, 0, 0, -2, 0, 0, 0, 0};
         gameData.setBoard(board);
         assertThrows(HttpClientErrorException.class, () -> gameService.processGameData(gameData));
     }
 
     @Test
-    public void playerWinsWithHorizontalStreakTest() {
+    void playerWinsWithHorizontalStreakTest() {
         int[] board = {0, -1, 0, 1, 1, 1, 0, -1, 0};
         gameData.setBoard(board);
         assertEquals("player wins", gameService.processGameData(gameData).getStatus());
     }
 
     @Test
-    public void playerWinsWithVerticalStreakTest() {
+    void playerWinsWithVerticalStreakTest() {
         int[] board = {0, 1, 0, -1, 1, -1, 0, 1, 0};
         gameData.setBoard(board);
         assertEquals("player wins", gameService.processGameData(gameData).getStatus());
     }
 
     @Test
-    public void aDrawTest() {
+    void aDrawTest() {
         int[] board = {1, -1, -1, -1, 1, 1, 1, 1, -1};
         gameData.setBoard(board);
         assertEquals("a draw", gameService.processGameData(gameData).getStatus());
     }
 
     @Test
-    public void apiWinsWithDiagonalStreakTest() {
+    void apiWinsWithDiagonalStreakTest() {
         int[] board = {-1, 1, 0, 1, 0, 0, 0, 1, -1};
         gameData.setBoard(board);
         assertEquals("API wins", gameService.processGameData(gameData).getStatus());
@@ -61,7 +61,7 @@ public class GameServiceTest {
     }
 
     @Test
-    public void apiPreventsPlayersVictoryWithDiagonalStreakTest() {
+    void apiPreventsPlayersVictoryWithDiagonalStreakTest() {
         int[] board = {-1, 1, 1, 0, 0, -1, 1, 0, 0};
         gameData.setBoard(board);
         assertEquals("API makes a move", gameService.processGameData(gameData).getStatus());
@@ -69,7 +69,7 @@ public class GameServiceTest {
     }
 
     @Test
-    public void apiTakesTheMiddleCellTest() {
+    void apiTakesTheMiddleCellTest() {
         int[] board = {0, 0, 1, 0, 0, 0, 0, 0, 0};
         gameData.setBoard(board);
         assertEquals("API makes a move", gameService.processGameData(gameData).getStatus());
@@ -77,7 +77,7 @@ public class GameServiceTest {
     }
 
     @Test
-    public void apiTakesACornerCellTest() {
+    void apiTakesACornerCellTest() {
         int[] board = {0, 0, 0, 0, 1, 0, 0, 0, 0};
         gameData.setBoard(board);
         assertEquals("API makes a move", gameService.processGameData(gameData).getStatus());
@@ -85,7 +85,7 @@ public class GameServiceTest {
     }
 
     @Test
-    public void apiTakesASideCellTest() {
+    void apiTakesASideCellTest() {
         int[] board = {0, 0, 1, 0, -1, 0, 1, 0, 0};
         gameData.setBoard(board);
         assertEquals("API makes a move", gameService.processGameData(gameData).getStatus());
@@ -93,7 +93,7 @@ public class GameServiceTest {
     }
 
     @Test
-    public void apiTakesACornerCellWhenApisCellInTheMiddleTest() {
+    void apiTakesACornerCellWhenApisCellInTheMiddleTest() {
         int[] board = {0, 0, 1, 1, -1, 0, 0, 0, 0};
         gameData.setBoard(board);
         assertEquals("API makes a move", gameService.processGameData(gameData).getStatus());

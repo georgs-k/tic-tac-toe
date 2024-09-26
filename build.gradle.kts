@@ -7,8 +7,8 @@ plugins {
 }
 
 group = "tinygames"
-version = "0.0.1-SNAPSHOT"
-java.sourceCompatibility = JavaVersion.VERSION_1_8
+version = "0.0.1"
+java.sourceCompatibility = JavaVersion.VERSION_17
 
 configurations {
 	compileOnly {
@@ -20,16 +20,21 @@ repositories {
 	mavenCentral()
 }
 
+val springfoxVersion = "3.0.0"
+
 dependencies {
-	implementation ("io.springfox:springfox-boot-starter:3.0.0")
-	implementation ("io.springfox:springfox-swagger2:3.0.0")
-	implementation ("io.springfox:springfox-swagger-ui:3.0.0")
+	implementation ("io.springfox:springfox-boot-starter:$springfoxVersion")
+	implementation ("io.springfox:springfox-swagger2")
+	implementation ("io.springfox:springfox-swagger-ui")
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("org.springframework.boot:spring-boot-starter-web")
-    testImplementation("junit:junit:4.13.1")
-    compileOnly("org.projectlombok:lombok:1.18.30")
-	annotationProcessor("org.projectlombok:lombok:1.18.30")
-	testImplementation("org.springframework.boot:spring-boot-starter-test")
+
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("junit:junit")
+
+    compileOnly("org.projectlombok:lombok")
+
+    annotationProcessor("org.projectlombok:lombok")
 }
 
 sonarqube {
