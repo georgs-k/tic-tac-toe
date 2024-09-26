@@ -21,6 +21,7 @@ repositories {
 }
 
 val springfoxVersion = "3.0.0"
+val lombokVersion = "1.18.30"
 
 dependencies {
 	implementation ("io.springfox:springfox-boot-starter:$springfoxVersion")
@@ -32,9 +33,9 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("junit:junit")
 
-    compileOnly("org.projectlombok:lombok")
+    compileOnly("org.projectlombok:lombok:$lombokVersion")
 
-    annotationProcessor("org.projectlombok:lombok")
+    annotationProcessor("org.projectlombok:lombok:$lombokVersion")
 }
 
 sonarqube {
